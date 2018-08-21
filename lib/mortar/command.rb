@@ -59,7 +59,8 @@ module Mortar
             {
               name: 'kubernetes',
               cluster: {
-                server: ENV['KUBE_SERVER']
+                server: ENV['KUBE_SERVER'],
+                certificate_authority_data: Base64.strict_decode64(ENV['KUBE_CA'])
               }
             }
           ],
@@ -67,7 +68,6 @@ module Mortar
             {
               name: 'mortar',
               user: {
-                client_certificate_data: Base64.strict_decode64(ENV['KUBE_CA']),
                 token: ENV['KUBE_TOKEN']
               }
             }
