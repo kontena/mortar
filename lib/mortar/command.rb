@@ -1,4 +1,5 @@
 require "clamp"
+require "base64"
 require_relative "yaml_file"
 
 Clamp.allow_options_after_parameters = true
@@ -52,7 +53,39 @@ module Mortar
     def client
       return @client if @client
 
-      if ENV['KUBECONFIG']
+      if ENV['KUBE_TOKEN'] && ENV['KUBE_CA'] && ENV['KUBE_SERVER']
+        kubeconfig = K8s::Config.new(
+          clusters: [
+            {
+              name: 'kubernetes',
+              cluster: {
+                server: ENV['KUBE_SERVER']
+              }
+            }
+          ],
+          users: [
+            {
+              name: 'mortar',
+              user: {
+                client_certificate_data: Base64.strict_decode64(ENV['KUBE_CA']),
+                token: ENV['KUBE_TOKEN']
+              }
+            }
+          ],
+          contexts: [
+            {
+              name: 'mortar',
+              context: {
+                cluster: 'kubernetes',
+                user: 'mortar'
+              }
+            }
+          ],
+          preferences: {},
+          current_context: 'mortar'
+        )
+        @client = K8s::Client.new(K8s::Transport.config(kubeconfig))
+      elsif ENV['KUBECONFIG']
         @client = K8s::Client.config(K8s::Config.load_file(ENV['KUBECONFIG']))
       else
         @client = K8s::Client.in_cluster_config
