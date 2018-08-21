@@ -4,25 +4,48 @@ Shoots Kubernetes manifests.
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Rubygems:
 
-```ruby
-gem 'mortar'
-```
+`$ gem install mortar`
 
-And then execute:
+Docker:
 
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install mortar
+`$ docker pull quay.io/kontena/mortar:latest`
 
 ## Usage
+
+### Configuration
+
+By default mortar looks for if file `~/.kube/config` exists and uses it as the configuration. Configuration file path can be overridden with `KUBECONFIG` environment variable.
+
+For CI/CD use mortar also understands following environment variables:
+
+- `KUBE_SERVER`: kubernetes api server address, for example `https://10.10.10.10:6443`
+- `KUBE_TOKEN`: service account token
+- `KUBE_CA`: kubernetes CA certificate (base64 encoded)
+
+### Deploying k8s yaml manifests
 
 ```
 $ mortar <deployment-name> <src-folder>
 ```
+
+### Docker image
+
+You can use mortar in CI/CD pipelines (like Drone) via `quay.io/kontena/mortar:latest` image.
+
+Example config for Drone:
+
+```yaml
+pipeline:
+  deploy:
+    image: quay.io/kontena/mortar:latest
+    secrets: [ kube_token, kube_ca, kube_server ]
+    commands:
+      - mortar my-app k8s/
+
+```
+
 
 ## Contributing
 
