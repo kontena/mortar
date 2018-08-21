@@ -54,42 +54,48 @@ module Mortar
       return @client if @client
 
       if ENV['KUBE_TOKEN'] && ENV['KUBE_CA'] && ENV['KUBE_SERVER']
-        kubeconfig = K8s::Config.new(
-          clusters: [
-            {
-              name: 'kubernetes',
-              cluster: {
-                server: ENV['KUBE_SERVER'],
-                certificate_authority_data: ENV['KUBE_CA']
-              }
-            }
-          ],
-          users: [
-            {
-              name: 'mortar',
-              user: {
-                token: ENV['KUBE_TOKEN']
-              }
-            }
-          ],
-          contexts: [
-            {
-              name: 'mortar',
-              context: {
-                cluster: 'kubernetes',
-                user: 'mortar'
-              }
-            }
-          ],
-          preferences: {},
-          current_context: 'mortar'
-        )
-        @client = K8s::Client.new(K8s::Transport.config(kubeconfig))
+        @client = K8s::Client.new(K8s::Transport.config(build_kubeconfig_from_env))
       elsif ENV['KUBECONFIG']
         @client = K8s::Client.config(K8s::Config.load_file(ENV['KUBECONFIG']))
+      elsif File.exist?(File.join(Dir.home, '.kube', 'config'))
+        @client = K8s::Client.config(K8s::Config.load_file(File.join(Dir.home, '.kube', 'config')))
       else
         @client = K8s::Client.in_cluster_config
       end
+    end
+
+    # @return [K8s::Config]
+    def build_kubeconfig_from_env
+      K8s::Config.new(
+        clusters: [
+          {
+            name: 'kubernetes',
+            cluster: {
+              server: ENV['KUBE_SERVER'],
+              certificate_authority_data: ENV['KUBE_CA']
+            }
+          }
+        ],
+        users: [
+          {
+            name: 'mortar',
+            user: {
+              token: ENV['KUBE_TOKEN']
+            }
+          }
+        ],
+        contexts: [
+          {
+            name: 'mortar',
+            context: {
+              cluster: 'kubernetes',
+              user: 'mortar'
+            }
+          }
+        ],
+        preferences: {},
+        current_context: 'mortar'
+      )
     end
   end
 end
