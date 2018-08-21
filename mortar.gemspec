@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.summary       = "Kubernetes manifest shooter"
   spec.description   = "Kubernetes manifest shooter"
   spec.homepage      = "https://github.com/kontena/k8s-mortar"
-  spec.license       = "MIT"
+  spec.license       = "APL 2.0"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
