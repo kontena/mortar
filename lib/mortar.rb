@@ -1,4 +1,5 @@
 require "clamp"
+require "deep_merge"
 require "mortar/version"
 require "mortar/command"
 
