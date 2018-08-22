@@ -8,45 +8,92 @@ module Mortar
   class Command < Clamp::Command
     banner "mortar - Kubernetes manifest shooter"
 
+    parameter "NAME", "deployment name"
+    parameter "SRC", "source folder"
+
+    option ["--var"], "VAR", "set template variables", multivalued: true
+    option ["-d", "--debug"], :flag, "debug"
+    option ["--output"], :flag, "only output generated yaml"
+    option ["--prune"], :flag, "automatically delete removed resources"
     option ['-v', '--version'], :flag, "print mortar version" do
       puts "mortar #{Mortar::VERSION}"
       exit 0
     end
-    option ["-d", "--debug"], :flag, "debug"
-
-    parameter "NAME", "deployment name"
-    parameter "SRC", "source folder"
 
     LABEL = 'mortar.kontena.io/shot'
     CHECKSUM_ANNOTATION = 'mortar.kontena.io/shot-checksum'
 
     def execute
-      signal_usage_error("#{src} is not a directory") unless File.exist?(src)
+      signal_usage_error("#{src} does not exist") unless File.exist?(src)
       stat = File.stat(src)
-      signal_usage_error("#{src} is not a directory") unless stat.directory?
+      if stat.directory?
+        resources = from_files(src)
+      else 
+        resources = from_file(src)
+      end
 
-      resources = from_files(src)
+      if output?
+        puts resources_output(resources)
+        exit
+      end
 
-      #K8s::Logging.verbose!
       K8s::Stack.new(
         name, resources,
         debug: debug?,
         label: LABEL, 
         checksum_annotation: CHECKSUM_ANNOTATION
-      ).apply(client)
-      puts "pushed #{name} successfully!"
+      ).apply(client, prune: prune?)
+
+      puts "shot #{name} successfully!" if $stdout.tty?
+    end
+
+    # @param resources [Array<K8s::Resource>]
+    # @return [String]
+    def resources_output(resources)
+      yaml = ::YAML.dump(JSON.load(JSON.dump(resources)))
+      return yaml unless $stdout.tty?
+
+      lexer = Rouge::Lexers::YAML.new
+      rouge = Rouge::Formatters::Terminal256.new(Rouge::Themes::Github.new)
+      rouge.format(lexer.lex(yaml))
     end
 
     # @param filename [String] file path
     # @return [Array<K8s::Resource>]
     def from_files(path)
-      Dir.glob("#{path}/*.{yml,yaml}").sort.map { |file| self.from_file(file) }.flatten
+      Dir.glob("#{path}/*.{yml,yaml,yml.erb,yaml.erb}").sort.map { |file| 
+        self.from_file(file) 
+      }.flatten
     end
 
     # @param filename [String] file path
-    # @return [K8s::Resource]
+    # @return [Array<K8s::Resource>]
     def from_file(filename)
-      K8s::Resource.new(YamlFile.new(filename).load)
+      variables = { name: name, var: variables_struct }
+      resources = YamlFile.new(filename).load(variables)
+      resources.map { |r| K8s::Resource.new(r) }
+    rescue Mortar::YamlFile::ParseError => exc
+      signal_usage_error exc.message
+    end
+
+    # @return [RecursiveOpenStruct]
+    def variables_struct
+      return @variables_struct if @variables_struct
+
+      set_hash = {}
+      var_list.each do |var|
+        k, v = var.split("=", 2)
+        set_hash[k] = v
+      end
+      RecursiveOpenStruct.new(dotted_path_to_hash(set_hash))
+    end
+
+    def dotted_path_to_hash(hash)
+      hash.map do |pkey, pvalue|
+        pkey.to_s.split(".").reverse.inject(pvalue) do |value, key|
+          {key.to_sym => value}
+        end
+      end.inject(&:deep_merge)
     end
 
     # @return [K8s::Client]

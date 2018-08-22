@@ -4,7 +4,9 @@ require "mortar/command"
 
 autoload :K8s, "k8s-client"
 autoload :YAML, "yaml"
-autoload :Erb, "erb"
+autoload :ERB, "erb"
+autoload :Rouge, "rouge"
+autoload :RecursiveOpenStruct, "recursive-open-struct"
 
 module Mortar
 end

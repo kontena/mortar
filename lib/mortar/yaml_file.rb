@@ -34,8 +34,9 @@ module Mortar
       @force_erb = force_erb
     end
 
+    # @return [Array<Hash>]
     def load(variables = {})
-      result = YAML.safe_load(read(variables), [], [], true, @filename)
+      result = YAML.load_stream(read(variables), @filename)
       if result.is_a?(String)
         raise ParseError, "File #{"#{@filename} " if @filename}does not appear to be in YAML format"
       end
