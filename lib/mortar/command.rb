@@ -28,7 +28,7 @@ module Mortar
       stat = File.stat(src)
       if stat.directory?
         resources = from_files(src)
-      else 
+      else
         resources = from_file(src)
       end
 
@@ -40,7 +40,7 @@ module Mortar
       K8s::Stack.new(
         name, resources,
         debug: debug?,
-        label: LABEL, 
+        label: LABEL,
         checksum_annotation: CHECKSUM_ANNOTATION
       ).apply(client, prune: prune?)
 
@@ -50,7 +50,10 @@ module Mortar
     # @param resources [Array<K8s::Resource>]
     # @return [String]
     def resources_output(resources)
-      yaml = ::YAML.dump(JSON.load(JSON.dump(resources)))
+      yaml = ''
+      resources.each do |resource|
+        yaml << ::YAML.dump(stringify_hash(resource.to_hash))
+      end
       return yaml unless $stdout.tty?
 
       lexer = Rouge::Lexers::YAML.new
@@ -61,8 +64,8 @@ module Mortar
     # @param filename [String] file path
     # @return [Array<K8s::Resource>]
     def from_files(path)
-      Dir.glob("#{path}/*.{yml,yaml,yml.erb,yaml.erb}").sort.map { |file| 
-        self.from_file(file) 
+      Dir.glob("#{path}/*.{yml,yaml,yml.erb,yaml.erb}").sort.map { |file|
+        self.from_file(file)
       }.flatten
     end
 
@@ -143,6 +146,12 @@ module Mortar
         preferences: {},
         current_context: 'mortar'
       )
+    end
+
+    # Stringifies all hash keys
+    # @return [Hash]
+    def stringify_hash(hash)
+      JSON.load(JSON.dump(hash))
     end
   end
 end
