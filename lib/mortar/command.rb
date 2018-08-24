@@ -1,11 +1,14 @@
 require "clamp"
 require "base64"
 require_relative "yaml_file"
+require_relative "resource_helper"
 
 Clamp.allow_options_after_parameters = true
 
 module Mortar
   class Command < Clamp::Command
+    include Mortar::ResourceHelper
+
     banner "mortar - Kubernetes manifest shooter"
 
     parameter "NAME", "deployment name"
@@ -19,19 +22,14 @@ module Mortar
       puts "mortar #{Mortar::VERSION}"
       exit 0
     end
+    option ["--overlay"], "OVERLAY", "overlay dirs", multivalued: true
 
     LABEL = 'mortar.kontena.io/shot'
     CHECKSUM_ANNOTATION = 'mortar.kontena.io/shot-checksum'
 
     def execute
       signal_usage_error("#{src} does not exist") unless File.exist?(src)
-      stat = File.stat(src)
-      if stat.directory?
-        resources = from_files(src)
-      else
-        resources = from_file(src)
-      end
-
+      resources = process_overlays
       if output?
         puts resources_output(resources)
         exit
@@ -45,6 +43,28 @@ module Mortar
       ).apply(client, prune: prune?)
 
       puts "shot #{name} successfully!" if $stdout.tty?
+    end
+
+    def process_overlays
+      resources = load_resources(src)
+
+      overlay_list.each do |overlay|
+        overlay_resources = from_files(overlay)
+        overlay_resources.each do |overlay_resource|
+          match = false
+          resources = resources.map { |r|
+            if same_resource?(r, overlay_resource)
+              match = true
+              r.merge(overlay_resource.to_hash)
+            else
+              r
+            end
+          }
+          resources << overlay_resource unless match
+        end
+      end
+
+      resources
     end
 
     # @param resources [Array<K8s::Resource>]
@@ -61,23 +81,7 @@ module Mortar
       rouge.format(lexer.lex(yaml))
     end
 
-    # @param filename [String] file path
-    # @return [Array<K8s::Resource>]
-    def from_files(path)
-      Dir.glob("#{path}/*.{yml,yaml,yml.erb,yaml.erb}").sort.map { |file|
-        self.from_file(file)
-      }.flatten
-    end
 
-    # @param filename [String] file path
-    # @return [Array<K8s::Resource>]
-    def from_file(filename)
-      variables = { name: name, var: variables_struct }
-      resources = YamlFile.new(filename).load(variables)
-      resources.map { |r| K8s::Resource.new(r) }
-    rescue Mortar::YamlFile::ParseError => exc
-      signal_usage_error exc.message
-    end
 
     # @return [RecursiveOpenStruct]
     def variables_struct
