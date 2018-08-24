@@ -19,5 +19,5 @@ pipeline:
     commands:
       - gem build kontena-mortar.gemspec
       - gem push kontena-mortar-$(ruby -r ./lib/mortar/version.rb -e "puts Mortar::VERSION").gem
-    on:
-      tags: true
+    when:
+      event: ['tag']
