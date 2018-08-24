@@ -17,6 +17,8 @@ pipeline:
     image: ruby:2.4
     secrets: [ rubygems_auth ]
     commands:
+      - mkdir -p ~/.gem
+      - echo $RUBYGEMS_AUTH > ~/.gem/credentials
       - gem build kontena-mortar.gemspec
       - gem push kontena-mortar-$(ruby -r ./lib/mortar/version.rb -e "puts Mortar::VERSION").gem
     when:
