@@ -81,8 +81,6 @@ module Mortar
       rouge.format(lexer.lex(yaml))
     end
 
-
-
     # @return [RecursiveOpenStruct]
     def variables_struct
       return @variables_struct if @variables_struct
@@ -120,6 +118,11 @@ module Mortar
 
     # @return [K8s::Config]
     def build_kubeconfig_from_env
+      token = ENV['KUBE_TOKEN']
+      begin
+        token = Base64.strict_decode64(token)
+      rescue ArgumentError # raised if token is not base64 encoded
+      end
       K8s::Config.new(
         clusters: [
           {
@@ -134,7 +137,7 @@ module Mortar
           {
             name: 'mortar',
             user: {
-              token: ENV['KUBE_TOKEN']
+              token: token
             }
           }
         ],
