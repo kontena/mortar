@@ -20,6 +20,6 @@ pipeline:
       - mkdir -p ~/.gem
       - echo $RUBYGEMS_AUTH | base64 -d > ~/.gem/credentials && chmod 0600 ~/.gem/credentials
       - gem build kontena-mortar.gemspec
-      - gem push kontena-mortar-$(ruby -r ./lib/mortar/version.rb -e "puts Mortar::VERSION").gem
+      - gem push *.gem
     when:
       event: ['tag']
