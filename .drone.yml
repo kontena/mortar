@@ -1,0 +1,23 @@
+pipeline:
+  test:
+    image: ruby:2.4
+    commands:
+      - bundle install --path bundler
+      # Uncomment when we have proper tests etc. in place
+      # - bundle exec rspec spec/ && bundle exec rubocop --fail-level A -S --format c --parallel
+  docker:
+    registry: quay.io
+    image: plugins/docker
+    secrets: [ docker_username, docker_password ]
+    repo: quay.io/kontena/mortar
+    dockerfile: Dockerfile
+    auto_tag: true
+
+  release-gem:
+    image: ruby:2.4
+    secrets: [ rubygems_auth ]
+    commands:
+      - gem build kontena-mortar.gemspec
+      - gem push kontena-mortar-$(ruby -r ./lib/mortar/version.rb -e "puts Mortar::VERSION").gem
+    on:
+      tags: true
