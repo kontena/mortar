@@ -4,14 +4,14 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "mortar/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "mortar"
+  spec.name          = "kontena-mortar"
   spec.version       = Mortar::VERSION
   spec.authors       = ["Kontena, Inc"]
   spec.email         = ["info@kontena.io"]
 
   spec.summary       = "Kubernetes manifest shooter"
   spec.description   = "Kubernetes manifest shooter"
-  spec.homepage      = "https://github.com/kontena/k8s-mortar"
+  spec.homepage      = "https://github.com/kontena/mortar"
   spec.license       = "Apache-2.0"
 
   # Specify which files should be added to the gem when it is released.

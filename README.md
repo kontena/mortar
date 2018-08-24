@@ -1,12 +1,12 @@
-# Mortar
+# Kontena Mortar
 
-Shoots Kubernetes manifests.
+Kubernetes manifest shooter.
 
 ## Installation
 
 Rubygems:
 
-`$ gem install mortar`
+`$ gem install kontena-mortar`
 
 Docker:
 
