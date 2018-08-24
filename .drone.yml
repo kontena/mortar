@@ -5,13 +5,25 @@ pipeline:
       - bundle install --path bundler
       # Uncomment when we have proper tests etc. in place
       # - bundle exec rspec spec/ && bundle exec rubocop --fail-level A -S --format c --parallel
-  docker:
+  docker_latest:
     registry: quay.io
     image: plugins/docker
     secrets: [ docker_username, docker_password ]
     repo: quay.io/kontena/mortar
     dockerfile: Dockerfile
     auto_tag: true
+    when:
+      branch: ['master']
+      event: ['push']
+  docker_release:
+    registry: quay.io
+    image: plugins/docker
+    secrets: [ docker_username, docker_password ]
+    repo: quay.io/kontena/mortar
+    dockerfile: Dockerfile
+    auto_tag: true
+    when:
+      event: ['tag']
 
   release-gem:
     image: ruby:2.4
