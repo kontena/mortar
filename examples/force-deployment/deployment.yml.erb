@@ -1,0 +1,27 @@
+# An dynamic annotation can be used to force Kubernetes to deploy pods.
+# In this example mortar will set DRONE_BUILD_NUMBER environment variable as a value of 'build' annotation.
+# Basically annotation can be, for example, datetime, commit sha or any unique value
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  strategy:
+  template:
+    metadata:
+      labels:
+        app: nginx
+      annotations:
+        build: "<%= ENV['DRONE_BUILD_NUMBER'] %>"
+    spec:
+      containers:
+      - image: docker.io/nginx:alpine
+        imagePullPolicy: Always
+        name: nginx
+        ports:
+        - containerPort: 80
