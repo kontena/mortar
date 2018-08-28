@@ -1,0 +1,13 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: nginx
+  labels:
+    name: nginx
+  namespace: default
+spec:
+  containers:
+  - name: nginx
+    image: nginx:<%= ENV["NGINX_VERSION"] || "latest" %>
+    ports:
+      - containerPort: 80

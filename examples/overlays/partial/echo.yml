@@ -1,0 +1,8 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: echoserver
+  namespace: default
+  labels:
+    partial: works too :)

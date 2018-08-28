@@ -1,0 +1,14 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: myapp
+  labels:
+    name: myapp
+    foo: <%= var.foo.bar %>
+spec:
+  containers:
+  - name: myapp
+    image: foobar
+    ports:
+      - containerPort: 8080
+
