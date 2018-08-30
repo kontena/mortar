@@ -1,0 +1,19 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: nginx
+  labels:
+    name: nginx
+  namespace: default
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+    ports:
+      <%# Easy to loop through some variables with the dotted notation
+        # Run this with example mortar --var port.one=80 --var port.two=8080
+      %>
+      <% var.port.each do |name, number| %>
+      - containerPort: <%= number %>
+        name: <%= name %>
+      <% end %>

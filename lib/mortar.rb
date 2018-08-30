@@ -9,5 +9,7 @@ autoload :ERB, "erb"
 autoload :Rouge, "rouge"
 autoload :RecursiveOpenStruct, "recursive-open-struct"
 
+require "extensions/recursive_open_struct/each"
+
 module Mortar
 end

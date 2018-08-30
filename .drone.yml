@@ -3,8 +3,7 @@ pipeline:
     image: ruby:2.4
     commands:
       - bundle install --path bundler
-      # Uncomment when we have proper tests etc. in place
-      # - bundle exec rspec spec/ && bundle exec rubocop --fail-level A -S --format c --parallel
+      - bundle exec rspec spec/ # && bundle exec rubocop --fail-level A -S --format c --parallel
   docker_latest:
     registry: quay.io
     image: plugins/docker

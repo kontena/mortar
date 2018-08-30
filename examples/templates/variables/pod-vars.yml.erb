@@ -10,5 +10,6 @@ spec:
   - name: nginx
     image: nginx:latest
     ports:
+      <%# Variables can be accessed by the name easily %>
       - containerPort: <%= port.number %>
         name: <%= port.name %>
