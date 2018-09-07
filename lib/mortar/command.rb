@@ -30,8 +30,14 @@ module Mortar
     def execute
       signal_usage_error("#{src} does not exist") unless File.exist?(src)
       resources = process_overlays
+
       if output?
         puts resources_output(resources)
+        exit
+      end
+
+      if resources.empty?
+        warn 'nothing to do!'
         exit
       end
 
