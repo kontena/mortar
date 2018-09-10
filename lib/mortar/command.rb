@@ -12,7 +12,7 @@ module Mortar
     banner "mortar - Kubernetes manifest shooter"
 
     parameter "NAME", "deployment name"
-    parameter "SRC", "source folder"
+    parameter "SRC", "source file or directory"
 
     option ["--var"], "VAR", "set template variables", multivalued: true
     option ["-d", "--debug"], :flag, "debug"
