@@ -125,10 +125,8 @@ module Mortar
     # @return [K8s::Config]
     def build_kubeconfig_from_env
       token = ENV['KUBE_TOKEN']
-      begin
-        token = Base64.strict_decode64(token)
-      rescue ArgumentError # raised if token is not base64 encoded
-      end
+      token = Base64.strict_decode64(token)
+
       K8s::Config.new(
         clusters: [
           {
@@ -159,6 +157,8 @@ module Mortar
         preferences: {},
         current_context: 'mortar'
       )
+    rescue ArgumentError
+      signal_usage_error "KUBE_TOKEN env doesn't seem to be base64 encoded!"
     end
 
     # Stringifies all hash keys

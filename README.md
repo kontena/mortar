@@ -33,7 +33,7 @@ By default mortar looks for if file `~/.kube/config` exists and uses it as the c
 For CI/CD use mortar also understands following environment variables:
 
 - `KUBE_SERVER`: kubernetes api server address, for example `https://10.10.10.10:6443`
-- `KUBE_TOKEN`: service account token
+- `KUBE_TOKEN`: service account token (base64 encoded)
 - `KUBE_CA`: kubernetes CA certificate (base64 encoded)
 
 ### Deploying k8s yaml manifests
