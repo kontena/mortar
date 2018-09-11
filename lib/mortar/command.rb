@@ -31,7 +31,7 @@ module Mortar
       begin
         Base64.strict_decode64(token)
       rescue ArgumentError
-        signal_usage_error "KUBE_TOKEN env doesn't seem to be base64 encoded!"
+        signal_usage_error "kube token doesn't seem to be base64 encoded!"
       end
     end
 
