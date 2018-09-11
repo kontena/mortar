@@ -1,13 +1,17 @@
 require "clamp"
 require "deep_merge"
 require "mortar/version"
-require "mortar/command"
+require "mortar/root_command"
 
 autoload :K8s, "k8s-client"
 autoload :YAML, "yaml"
 autoload :ERB, "erb"
 autoload :Rouge, "rouge"
 autoload :RecursiveOpenStruct, "recursive-open-struct"
+autoload :Pastel, "pastel"
+module TTY
+  autoload :Prompt, "tty-prompt"
+end
 
 require "extensions/recursive_open_struct/each"
 

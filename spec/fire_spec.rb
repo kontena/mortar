@@ -1,4 +1,4 @@
-RSpec.describe Mortar::Command do
+RSpec.describe Mortar::FireCommand do
 
     describe '#variables_struct' do
       it 'has each' do

@@ -10,4 +10,4 @@ require 'mortar'
 $0 = 'mortar'
 $stdout.sync = true
 
-Mortar::Command.run
+Mortar::RootCommand.run
