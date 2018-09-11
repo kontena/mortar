@@ -30,7 +30,7 @@ RSpec.describe Mortar::Command do
       let(:subject) { described_class.new('') }
       it 'shows error in token not base64 encoded' do
         ENV['KUBE_TOKEN'] = 'foobar'
-        expect(subject).to receive(:signal_usage_error).with("KUBE_TOKEN env doesn't seem to be base64 encoded!")
+        expect(subject).to receive(:signal_usage_error).with("kube token doesn't seem to be base64 encoded!")
         subject.build_kubeconfig_from_env
       end
 
