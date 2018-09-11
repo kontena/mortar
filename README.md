@@ -2,7 +2,7 @@
 
 ![Mortar - Manifest shooter for Kubernetes](kontena-mortar.png)
 
-Mortar is a tool to easily handle complex set of Kubernetes resources. Using `kubectl apply -f some_folder/` is pretty straightforward for simple cases, but often, especially in CI/CD pipelines things get complex. Then on the otherhand, writing everything in Helm charts is way too complex.
+Mortar is a tool to easily handle a complex set of Kubernetes resources. Using `kubectl apply -f some_folder/` is pretty straightforward for simple cases, but often, especially in CI/CD pipelines things get complex. Then on the otherhand, writing everything in Helm charts is way too complex.
 
 While we were developing [Kontena Pharos](https://kontena.io/pharos) Kubernetes distro and tooling around it, we soon realized that we really want to manage sets of resources as a single unit. This thinking got even stronger while we were transitioning many of our production solutions to run on top of Kubernetes. As this is a common problem for all Kubernetes users, Mortar was born.
 
