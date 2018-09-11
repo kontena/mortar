@@ -24,6 +24,17 @@ module Mortar
     end
     option ["--overlay"], "OVERLAY", "overlay dirs", multivalued: true
 
+    option '--kube-config', 'PATH', 'Kubernetes config path', environment_variable: 'KUBECONFIG'
+    option '--kube-server', 'ADDRESS', 'Kubernetes API server address', environment_variable: 'KUBE_SERVER'
+    option '--kube-ca', 'DATA', 'Kubernetes certificate authority data', environment_variable: 'KUBE_CA'
+    option '--kube-token', 'TOKEN', 'Kubernetes access token (Base64 encoded)', environment_variable: 'KUBE_TOKEN' do |token|
+      begin
+        Base64.strict_decode64(token)
+      rescue ArgumentError
+        signal_usage_error "KUBE_TOKEN env doesn't seem to be base64 encoded!"
+      end
+    end
+
     LABEL = 'mortar.kontena.io/shot'
     CHECKSUM_ANNOTATION = 'mortar.kontena.io/shot-checksum'
 
@@ -111,10 +122,13 @@ module Mortar
     def client
       return @client if @client
 
-      if ENV['KUBE_TOKEN'] && ENV['KUBE_CA'] && ENV['KUBE_SERVER']
+      if kube_token || kube_server || kube_ca
+        unless kube_token && kube_server && kube_ca
+          signal_usage_error "--kube-token --kube-server and --kube-ca are required to be used together"
+        end
         @client = K8s::Client.new(K8s::Transport.config(build_kubeconfig_from_env))
-      elsif ENV['KUBECONFIG']
-        @client = K8s::Client.config(K8s::Config.load_file(ENV['KUBECONFIG']))
+      elsif kubeconfig
+        @client = K8s::Client.config(K8s::Config.load_file(kubeconfig))
       elsif File.exist?(File.join(Dir.home, '.kube', 'config'))
         @client = K8s::Client.config(K8s::Config.load_file(File.join(Dir.home, '.kube', 'config')))
       else
@@ -124,16 +138,13 @@ module Mortar
 
     # @return [K8s::Config]
     def build_kubeconfig_from_env
-      token = ENV['KUBE_TOKEN']
-      token = Base64.strict_decode64(token)
-
       K8s::Config.new(
         clusters: [
           {
             name: 'kubernetes',
             cluster: {
-              server: ENV['KUBE_SERVER'],
-              certificate_authority_data: ENV['KUBE_CA']
+              server: kube_server,
+              certificate_authority_data: kube_ca
             }
           }
         ],
@@ -141,7 +152,7 @@ module Mortar
           {
             name: 'mortar',
             user: {
-              token: token
+              token: kube_token
             }
           }
         ],
@@ -157,8 +168,6 @@ module Mortar
         preferences: {},
         current_context: 'mortar'
       )
-    rescue ArgumentError
-      signal_usage_error "KUBE_TOKEN env doesn't seem to be base64 encoded!"
     end
 
     # Stringifies all hash keys
