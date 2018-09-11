@@ -124,9 +124,10 @@ module Mortar
 
       if kube_token || kube_server || kube_ca
         unless kube_token && kube_server && kube_ca
-          signal_usage_error "--kube-token --kube-server and --kube-ca are required to be used together"
+          $stderr.puts("%p %p %p" % [kube_token, kube_server, kube_ca])
+          signal_usage_error "kube token, server and ca are required to be used together"
         end
-        @client = K8s::Client.new(K8s::Transport.config(build_kubeconfig_from_env))
+        @client = K8s::Client.new(K8s::Transport.config(K8s::Config.new(build_kubeconfig_from_env)))
       elsif kubeconfig
         @client = K8s::Client.config(K8s::Config.load_file(kubeconfig))
       elsif File.exist?(File.join(Dir.home, '.kube', 'config'))
@@ -138,7 +139,7 @@ module Mortar
 
     # @return [K8s::Config]
     def build_kubeconfig_from_env
-      K8s::Config.new(
+      {
         clusters: [
           {
             name: 'kubernetes',
@@ -167,7 +168,7 @@ module Mortar
         ],
         preferences: {},
         current_context: 'mortar'
-      )
+      }
     end
 
     # Stringifies all hash keys
