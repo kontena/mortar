@@ -9,9 +9,6 @@ autoload :ERB, "erb"
 autoload :Rouge, "rouge"
 autoload :RecursiveOpenStruct, "recursive-open-struct"
 autoload :Pastel, "pastel"
-module TTY
-  autoload :Prompt, "tty-prompt"
-end
 
 require "extensions/recursive_open_struct/each"
 

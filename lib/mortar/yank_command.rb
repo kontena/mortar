@@ -13,8 +13,17 @@ module Mortar
 
     def execute
       unless force?
-        unless prompt.ask("enter '#{pastel.cyan(name)}' to confirm yank:") == name
-          signal_error("confirmation did not match #{pastel.cyan(name)}.")
+        if $stdin.tty?
+          print "enter '#{pastel.cyan(name)}' to confirm yank: "
+          begin
+            signal_error("confirmation did not match #{pastel.cyan(name)}.") unless $stdin.gets.chomp == name
+          rescue Interrupt
+            puts
+            puts "Canceled"
+            return
+          end
+        else
+          signal_usage_error '--force required when running in a non-interactive mode'
         end
       end
 
@@ -26,8 +35,6 @@ module Mortar
       ).prune(client, keep_resources: false)
 
       puts "yanked #{pastel.cyan(name)} successfully!" if $stdout.tty?
-
-    rescue TTY::Reader::InputInterrupt
     end
   end
 end
