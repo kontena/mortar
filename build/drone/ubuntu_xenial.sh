@@ -11,7 +11,7 @@ gem install bundler
 version=${DRONE_TAG#"v"}
 package="mortar-linux-amd64-${version}"
 rubyc -o $package mortar
-./$package version
+./$package --version
 
 # ship to github
 curl -sL https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 | tar -xjO > /usr/local/bin/github-release
