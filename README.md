@@ -60,7 +60,7 @@ pipeline:
     image: quay.io/kontena/mortar:latest
     secrets: [ kube_token, kube_ca, kube_server ]
     commands:
-      - mortar my-app k8s/
+      - mortar fire k8s/ my-app
 
 ```
 
