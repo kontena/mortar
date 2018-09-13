@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 module Extensions
   module RecursiveOpenStruct
     module Each
-      def each(&block)
-        self.to_h.each { |k,v| yield k.to_s,v }
+      def each
+        to_h.each { |k, v| yield k.to_s, v }
       end
     end
   end

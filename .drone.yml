@@ -4,6 +4,7 @@ pipeline:
     commands:
       - bundle install --path bundler
       - bundle exec rspec spec/ # && bundle exec rubocop --fail-level A -S --format c --parallel
+      - bundle exec rubocop lib/
   docker_latest:
     registry: quay.io
     image: plugins/docker

@@ -1,17 +1,21 @@
+# frozen_string_literal: true
+
 module Mortar
   module ClientHelper
     # @return [K8s::Client]
     def client
-      return @client if @client
+      @client ||= create_client
+    end
 
+    def create_client
       if ENV['KUBE_TOKEN'] && ENV['KUBE_CA'] && ENV['KUBE_SERVER']
-        @client = K8s::Client.new(K8s::Transport.config(build_kubeconfig_from_env))
+        K8s::Client.new(K8s::Transport.config(build_kubeconfig_from_env))
       elsif ENV['KUBECONFIG']
-        @client = K8s::Client.config(K8s::Config.load_file(ENV['KUBECONFIG']))
+        K8s::Client.config(K8s::Config.load_file(ENV['KUBECONFIG']))
       elsif File.exist?(File.join(Dir.home, '.kube', 'config'))
-        @client = K8s::Client.config(K8s::Config.load_file(File.join(Dir.home, '.kube', 'config')))
+        K8s::Client.config(K8s::Config.load_file(File.join(Dir.home, '.kube', 'config')))
       else
-        @client = K8s::Client.in_cluster_config
+        K8s::Client.in_cluster_config
       end
     end
 

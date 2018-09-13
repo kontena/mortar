@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative "command"
 require_relative "mixins/client_helper"
 require_relative "mixins/tty_helper"

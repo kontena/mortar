@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 module Mortar
   module ResourceHelper
     # @param filename [String] file path
     # @return [Array<K8s::Resource>]
     def from_files(path)
       Dir.glob("#{path}/*.{yml,yaml,yml.erb,yaml.erb}").sort.map { |file|
-          self.from_file(file)
+        from_file(file)
       }.flatten
     end
 
@@ -19,14 +21,7 @@ module Mortar
     end
 
     def load_resources(src)
-      stat = File.stat(src)
-      if stat.directory?
-        resources = from_files(src)
-      else
-        resources = from_file(src)
-      end
-
-      resources
+      File.directory?(src) ? from_files(src) : from_file(src)
     end
 
     # Checks if the two resource refer to the same resource. Two resources refer to same only if following match:
@@ -37,10 +32,11 @@ module Mortar
     # @param a [K8s::Resource]
     # @param b [K8s::Resource]
     # @return [TrueClass]
-    def same_resource?(a, b)
-      return true if a.namespace == b.namespace && a.apiVersion == b.apiVersion && a.kind == b.kind && a.metadata[:name] == b.metadata[:name]
-
-      false
+    def same_resource?(resource_a, resource_b)
+      resource_a.namespace == resource_b.namespace &&
+        resource_a.apiVersion == resource_b.apiVersion &&
+        resource_a.kind == resource_b.kind &&
+        resource_a.metadata[:name] == resource_b.metadata[:name]
     end
   end
 end

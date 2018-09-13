@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "base64"
 require_relative "command"
 require_relative "yaml_file"
@@ -94,7 +96,7 @@ module Mortar
     def dotted_path_to_hash(hash)
       hash.map do |pkey, pvalue|
         pkey.to_s.split(".").reverse.inject(pvalue) do |value, key|
-          {key.to_sym => value}
+          { key.to_sym => value }
         end
       end.inject(&:deep_merge)
     end
@@ -102,7 +104,7 @@ module Mortar
     # Stringifies all hash keys
     # @return [Hash]
     def stringify_hash(hash)
-      JSON.load(JSON.dump(hash))
+      JSON.parse(JSON.dump(hash))
     end
   end
 end

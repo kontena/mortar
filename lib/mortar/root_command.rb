@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "clamp"
 require_relative "fire_command"
 require_relative "yank_command"
@@ -6,7 +8,6 @@ Clamp.allow_options_after_parameters = true
 
 module Mortar
   class RootCommand < Clamp::Command
-
     banner "mortar - Kubernetes manifest shooter"
 
     option ['-v', '--version'], :flag, "print mortar version" do
