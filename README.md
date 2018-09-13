@@ -14,11 +14,13 @@ While we were developing [Kontena Pharos](https://kontena.io/pharos) Kubernetes 
 
 ## Installation
 
-Rubygems:
+### Rubygems:
 
 `$ gem install kontena-mortar`
 
-Docker:
+To install bash/zsh auto-completions, use `mortar install-completions` after Mortar has been installed.
+
+### Docker:
 
 `$ docker pull quay.io/kontena/mortar:latest`
 

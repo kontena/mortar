@@ -23,6 +23,8 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
+  spec.post_install_message = "To install shell auto-completions, use:\n  mortar install-completions"
+
   spec.add_runtime_dependency "clamp", "~> 1.3"
   spec.add_runtime_dependency "k8s-client", "~> 0.4.1"
   spec.add_runtime_dependency "rouge", "~> 3.2"
@@ -33,3 +35,4 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "rubocop", "~> 0.57"
 end
+

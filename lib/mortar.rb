@@ -11,6 +11,8 @@ autoload :ERB, "erb"
 autoload :Rouge, "rouge"
 autoload :RecursiveOpenStruct, "recursive-open-struct"
 autoload :Pastel, "pastel"
+autoload :Pathname, "pathname"
+autoload :FileUtils, "fileutils"
 
 require "extensions/recursive_open_struct/each"
 
