@@ -21,8 +21,7 @@ module Mortar
             signal_error("confirmation did not match #{pastel.cyan(name)}.") unless $stdin.gets.chomp == name
           rescue Interrupt
             puts
-            puts "Canceled"
-            return
+            abort 'Canceled'
           end
         else
           signal_usage_error '--force required when running in a non-interactive mode'
