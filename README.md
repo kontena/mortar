@@ -66,6 +66,12 @@ pipeline:
 
 ```
 
+## Namespaces
+
+**Namespace is mandatory to be set on the resources**
+
+Currently Mortar will not add any default namespaces into the resources it shoots. Therefore it is mandatory for the user to set the namespaces in all namespaced resources shot with Mortar. See [this](https://github.com/kontena/mortar/issues/10) issue for details and track the fix.
+
 ## Shots
 
 Mortar manages a set of resources as a single unit, we call them *shots*. A shot can have as many resources as your application needs, there's no limit to that. Much like you'd do with `kubectl apply -f my_dir/`, but Mortar actually injects information into the resources it shoots into your Kubernetes cluster. This added information, labels and annotations, will be used later on by Mortar itself or can be used with `kubectl` too. This allows the management of many resources as a single application.
