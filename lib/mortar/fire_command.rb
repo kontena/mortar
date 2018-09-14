@@ -70,7 +70,7 @@ module Mortar
     # @param resources [Array<K8s::Resource>]
     # @return [String]
     def resources_output(resources)
-      yaml = ''
+      yaml = +''
       resources.each do |resource|
         yaml << ::YAML.dump(stringify_hash(resource.to_hash))
       end
