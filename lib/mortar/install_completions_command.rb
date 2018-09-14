@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Mortar
   class InstallCompletionsCommand < Mortar::Command
     include Mortar::TTYHelper
@@ -26,12 +28,13 @@ module Mortar
       installed = []
 
       DEFAULT_PATHS.each do |path|
-        if File.directory?(File.dirname(path))
-          begin
-            FileUtils.ln_sf(COMPLETION_FILE_PATH, path)
-            installed << path
-          rescue Errno::EACCES, Errno::EPERM
-          end
+        next unless File.directory?(File.dirname(path))
+
+        begin
+          FileUtils.ln_sf(COMPLETION_FILE_PATH, path)
+          installed << path
+        rescue Errno::EACCES, Errno::EPERM
+          nil # To keep Mr. Rubocop happy
         end
       end
 
