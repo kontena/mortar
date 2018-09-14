@@ -111,13 +111,15 @@ See example of overlays [here](/examples/overlays).
 
 Mortar also support templating for the resource definitons. The templating language used is [ERB](https://en.wikipedia.org/wiki/ERuby). It's pretty simple templating language but yet powerful enough for Kubernetes resource templating.
 
-Mortar automatically processes the resource definition as a template if the filename is either `.yml.erb` or `.yaml.erb`.
+**Note:** Mortar will process the resource definitions as ERB even if the filename does not have the `.erb` extension. This means that Ruby code in an innocent looking `.yml` file will be evaluated using the current user's access privileges on the local machine. Running untrusted code is dangerous and so is deploying untrusted manifests, make sure you know what you're deploying.
+
+### Variables
 
 There are two ways to introduce variables into the templating.
 
 See examples at [examples/templates](examples/templates).
 
-### Environment variables
+#### Environment variables
 
 As for any process, environment variables are also available for Mortar during template processing.
 
@@ -137,7 +139,7 @@ spec:
       - containerPort: 80
 ```
 
-### Variables via options
+#### Variables via options
 
 Another option to use variables is via command-line options. Use `mortar --var foo=bar my-app resources/`.
 
