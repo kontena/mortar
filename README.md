@@ -14,6 +14,14 @@ While we were developing [Kontena Pharos](https://kontena.io/pharos) Kubernetes 
 
 ## Installation
 
+### MacOS Homebrew
+
+`$ brew install kontena/mortar/mortar`
+
+Or to install the latest development version:
+
+`$ brew install --HEAD kontena/mortar/mortar`
+
 ### Rubygems:
 
 `$ gem install kontena-mortar`
