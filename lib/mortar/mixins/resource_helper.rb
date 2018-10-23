@@ -38,5 +38,25 @@ module Mortar
         resource_a.kind == resource_b.kind &&
         resource_a.metadata[:name] == resource_b.metadata[:name]
     end
+
+    # @param resources [Array<K8s::Resource>]
+    # @return [String]
+    def resources_output(resources)
+      yaml = +''
+      resources.each do |resource|
+        yaml << ::YAML.dump(stringify_hash(resource.to_hash))
+      end
+      return yaml unless $stdout.tty?
+
+      lexer = Rouge::Lexers::YAML.new
+      rouge = Rouge::Formatters::Terminal256.new(Rouge::Themes::Github.new)
+      rouge.format(lexer.lex(yaml))
+    end
+
+    # Stringifies all hash keys
+    # @return [Hash]
+    def stringify_hash(hash)
+      JSON.parse(JSON.dump(hash))
+    end
   end
 end

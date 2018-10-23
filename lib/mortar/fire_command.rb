@@ -67,20 +67,6 @@ module Mortar
       resources
     end
 
-    # @param resources [Array<K8s::Resource>]
-    # @return [String]
-    def resources_output(resources)
-      yaml = +''
-      resources.each do |resource|
-        yaml << ::YAML.dump(stringify_hash(resource.to_hash))
-      end
-      return yaml unless $stdout.tty?
-
-      lexer = Rouge::Lexers::YAML.new
-      rouge = Rouge::Formatters::Terminal256.new(Rouge::Themes::Github.new)
-      rouge.format(lexer.lex(yaml))
-    end
-
     # @return [RecursiveOpenStruct]
     def variables_struct
       return @variables_struct if @variables_struct
@@ -99,12 +85,6 @@ module Mortar
           { key.to_sym => value }
         end
       end.inject(&:deep_merge)
-    end
-
-    # Stringifies all hash keys
-    # @return [Hash]
-    def stringify_hash(hash)
-      JSON.parse(JSON.dump(hash))
     end
   end
 end
