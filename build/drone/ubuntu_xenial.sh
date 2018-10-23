@@ -10,7 +10,9 @@ chmod +x /usr/local/bin/rubyc
 gem install bundler
 version=${DRONE_TAG#"v"}
 package="mortar-linux-amd64-${version}"
-rubyc -o $package mortar
+mkdir -p /root/mortar-build.tmp
+rubyc -o $package -d /root/mortar-build.tmp mortar
+rm -rf /root/mortar-build.tmp
 ./$package --version
 
 # ship to github
