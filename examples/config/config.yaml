@@ -1,0 +1,6 @@
+variables:
+  ports:
+    - name: http
+      number: 80
+    - name: https
+      number: 443

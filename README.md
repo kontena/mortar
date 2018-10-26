@@ -184,6 +184,26 @@ spec:
 
 You could shoot this resource with `mortar --var port.name=some-port --var port.number=80 my-app resources/pod.yml.erb`
 
+### Shot configuration file
+
+It is also possible to pass both [variables](#variables) and [overlays](#overlays) through a configuration file. As your templates complexity and the amount of variables used grows, it might be easier to manage the variables with an yaml configuration file. The config file has the following syntax:
+```
+variables:
+  ports:
+    - name: http
+      number: 80
+    - name: https
+      number: 443
+overlays:
+  - foo
+  - bar
+```
+
+Both `variables` and `overlays` are optional.
+
+For variables the hash is translated into a `RecursiveOpenStruct` object. What that means is that you can access each element with dotted path notation, just like the vars given through `--var` option. And of course arrays can be looped etc.. Check examples folder how to use variables effectively.
+
+The configuration file can be given using `-c` option to `mortar fire` command. By default Mortar will look for `shot.yml` or `shot.yaml` files present in current working directory.
 
 ## Contributing
 

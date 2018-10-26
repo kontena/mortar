@@ -10,6 +10,7 @@ spec:
   - name: nginx
     image: nginx:latest
     ports:
-      <%# Variables can be accessed by the name easily %>
-      - containerPort: <%= var.port.number %>
-        name: <%= var.port.name %>
+      <% var.ports.each { |port| %>
+      - containerPort: <%= port.number %>
+        name: <%= port.name %>
+      <% } %>

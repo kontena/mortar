@@ -1,8 +1,13 @@
 RSpec.describe Mortar::FireCommand do
 
     describe '#variables_struct' do
-      it 'has each' do
+      let(:subject) do
         subject = described_class.new('')
+        subject.load_config # Load the empty config
+        subject
+      end
+
+      it 'has each' do
         subject.parse(["test-shot", "/foobar", "--var", "foo=bar", "--var", "bar=baz"])
 
         vars = subject.variables_struct
@@ -14,7 +19,17 @@ RSpec.describe Mortar::FireCommand do
       end
 
       it 'has each for nested vars' do
-        subject = described_class.new('')
+        subject.parse(["test-shot", "/foobar", "--var", "port.foo=80", "--var", "port.bar=8080"])
+
+        vars = subject.variables_struct
+        ports = []
+        vars.port.each do |k,v|
+          ports << { k => v}
+        end
+        expect(ports).to eq([{'foo' => '80'}, { 'bar' => '8080'}])
+      end
+
+      it 'produces proper struct even without any vars' do
         subject.parse(["test-shot", "/foobar", "--var", "port.foo=80", "--var", "port.bar=8080"])
 
         vars = subject.variables_struct
@@ -41,5 +56,13 @@ RSpec.describe Mortar::FireCommand do
         expect(cfg.user.token).to eq('foobar')
       end
 
+    end
+
+    describe "#variables_hash" do
+      it 'return empty hash with no vars' do
+        subject = described_class.new('')
+        subject.parse(["test-shot", "/foobar"])
+        expect(subject.variables_hash).to eq({})
+      end
     end
   end

@@ -20,9 +20,30 @@ module Mortar
     option ["--output"], :flag, "only output generated yaml"
     option ["--prune"], :flag, "automatically delete removed resources"
     option ["--overlay"], "OVERLAY", "overlay dirs", multivalued: true
+    option ["-c", "--config"], "CONFIG", "variable and overlay configuration file"
+
+    def default_config
+      %w{shot.yml shot.yaml}.find { |path|
+        File.readable?(path)
+      }
+    end
+
+    def load_config
+      if config
+        signal_usage_error("Cannot read config file from #{path}") unless File.readable?(config)
+
+        @configuration = Config.load(config)
+      else
+        # No config provided nor the default config file present
+        @configuration = Config.new(variables: {}, overlays: [])
+      end
+    end
 
     def execute
       signal_usage_error("#{src} does not exist") unless File.exist?(src)
+
+      load_config
+
       resources = process_overlays
 
       if output?
@@ -46,9 +67,10 @@ module Mortar
     end
 
     def process_overlays
-      resources = load_resources(src)
-
-      overlay_list.each do |overlay|
+      # Reject any resource that do not have kind set
+      # Basically means the config or other random yml files found
+      resources = load_resources(src).reject { |r| r.kind.nil? }
+      @configuration.overlays(overlay_list).each do |overlay|
         overlay_resources = from_files(overlay)
         overlay_resources.each do |overlay_resource|
           match = false
@@ -69,22 +91,29 @@ module Mortar
 
     # @return [RecursiveOpenStruct]
     def variables_struct
-      return @variables_struct if @variables_struct
+      @variables_struct ||= @configuration.variables(variables_hash)
+    end
 
+    def variables_hash
       set_hash = {}
       var_list.each do |var|
         k, v = var.split("=", 2)
         set_hash[k] = v
       end
-      RecursiveOpenStruct.new(dotted_path_to_hash(set_hash))
+
+      dotted_path_to_hash(set_hash)
     end
 
     def dotted_path_to_hash(hash)
-      hash.map do |pkey, pvalue|
+      h = hash.map do |pkey, pvalue|
         pkey.to_s.split(".").reverse.inject(pvalue) do |value, key|
           { key.to_sym => value }
         end
-      end.inject(&:deep_merge)
+      end
+      # Safer to return just empty hash instead of nil
+      return {} if h.empty?
+
+      h.inject(&:deep_merge)
     end
   end
 end

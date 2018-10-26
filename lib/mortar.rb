@@ -4,6 +4,7 @@ require "clamp"
 require "deep_merge"
 require "mortar/version"
 require "mortar/root_command"
+require "mortar/config"
 
 autoload :K8s, "k8s-client"
 autoload :YAML, "yaml"
