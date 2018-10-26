@@ -18,7 +18,7 @@ module Mortar
 
     option ["--var"], "VAR", "set template variables", multivalued: true
     option ["--output"], :flag, "only output generated yaml"
-    option ["--prune"], :flag, "automatically delete removed resources"
+    option ["--[no-]prune"], :flag, "automatically delete removed resources", default: true
     option ["--overlay"], "OVERLAY", "overlay dirs", multivalued: true
     option ["-c", "--config"], "CONFIG", "variable and overlay configuration file"
 
