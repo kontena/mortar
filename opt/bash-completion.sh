@@ -14,7 +14,7 @@ _mortar () {
       return
     fi
 
-    COMPREPLY=( $(compgen -W "fire yank describe" -- ${cur}) )
+    COMPREPLY=( $(compgen -W "fire yank describe list" -- ${cur}) )
     return
   else
     case "${COMP_WORDS[1]}" in
@@ -38,6 +38,11 @@ _mortar () {
           COMPREPLY=( $(compgen -W "--output --debug --help" -- ${cur}) )
         elif [ "$prev" = "--output" ]; then
           COMPREPLY=( $(compgen -W "table yaml json" -- ${cur}) )
+        fi
+        ;;
+      list)
+        if [[ ${cur} == -* ]] ; then
+          COMPREPLY=( $(compgen -W "--quiet --debug --help" -- ${cur}) )
         fi
         ;;
     esac

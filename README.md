@@ -49,13 +49,25 @@ For CI/CD use mortar also understands following environment variables:
 ### Deploying k8s yaml manifests
 
 ```
-$ mortar fire [options] <src-folder> <deployment-name>
+$ mortar fire [options] <src-folder> <shot-name>
 ```
 
 ### Removing a deployment
 
 ```
-$ mortar yank [options] <deployment-name>
+$ mortar yank [options] <shot-name>
+```
+
+### Listing all shots
+
+```
+$ mortar list [options]
+```
+
+### Describing a shot
+
+```
+$ mortar describe [options] <shot-name>
 ```
 
 ### Docker image
