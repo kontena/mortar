@@ -14,6 +14,10 @@ While we were developing [Kontena Pharos](https://kontena.io/pharos) Kubernetes 
 
 ## Installation
 
+### Binaries
+
+Mortar pre-baked binaries are available for OSX and Linux. You can download them from the [releases](https://github.com/kontena/mortar/releases) page. Remember to put it in the path and change the executable bit on.
+
 ### MacOS Homebrew
 
 `$ brew install kontena/mortar/mortar`
@@ -32,7 +36,6 @@ To install bash/zsh auto-completions, use `mortar install-completions` after Mor
 
 `$ docker pull quay.io/kontena/mortar:latest`
 
-We will be working on also to support binary installation method in near future.
 
 ## Usage
 
