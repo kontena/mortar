@@ -39,6 +39,30 @@ RSpec.describe Mortar::FireCommand do
         end
         expect(ports).to eq([{'foo' => '80'}, { 'bar' => '8080'}])
       end
+
+      it 'overrides only given config file variable' do
+        subject.parse(["test-shot", "/foobar", "-c", fixture_path('config/config.yaml'), "--var", "some.deeper=deep"])
+        subject.load_config
+
+        vars = subject.variables_struct
+        keys = []
+        vars.some.each do |k,v|
+          keys << { k => v}
+        end
+        expect(keys).to eq([{'deeper' => 'deep'}, {'deepest' => 'variable'}])
+      end
+
+      it 'appends config file variable' do
+        subject.parse(["test-shot", "/foobar", "-c", fixture_path('config/config.yaml'), "--var", "some.deep=variable"])
+        subject.load_config
+
+        vars = subject.variables_struct
+        keys = []
+        vars.some.each do |k,v|
+          keys << { k => v}
+        end
+        expect(keys).to eq([{'deeper' => 'variable'}, { 'deepest' => 'variable'}, { 'deep' => 'variable' }])
+      end
     end
 
     describe "#build_kubeconfig_from_env" do

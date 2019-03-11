@@ -107,7 +107,7 @@ module Mortar
     def dotted_path_to_hash(hash)
       h = hash.map do |pkey, pvalue|
         pkey.to_s.split(".").reverse.inject(pvalue) do |value, key|
-          { key.to_sym => value }
+          { key.to_s => value }
         end
       end
       # Safer to return just empty hash instead of nil

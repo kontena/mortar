@@ -2,4 +2,5 @@ variables:
   foo: bar
   some:
     deeper: variable
+    deepest: variable
 
