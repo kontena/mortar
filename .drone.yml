@@ -1,33 +1,48 @@
-pipeline:
-  test:
+kind: pipeline
+name: amd64
+
+platform:
+  os: linux
+  arch: amd64
+steps:
+  - name: test
     image: ruby:2.4
     commands:
       - bundle install --path bundler
       - bundle exec rspec spec/ # && bundle exec rubocop --fail-level A -S --format c --parallel
       - bundle exec rubocop lib/
-  docker_latest:
-    registry: quay.io
+  - name: docker_latest
     image: plugins/docker
-    secrets: [ docker_username, docker_password ]
-    repo: quay.io/kontena/mortar
-    dockerfile: Dockerfile
-    auto_tag: true
+    settings:
+      registry: quay.io
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      repo: quay.io/kontena/mortar
+      dockerfile: Dockerfile
+      auto_tag: true
     when:
       branch: ['master']
       event: ['push']
-  docker_release:
-    registry: quay.io
+  - name: docker_release
     image: plugins/docker
-    secrets: [ docker_username, docker_password ]
-    repo: quay.io/kontena/mortar
-    dockerfile: Dockerfile
-    auto_tag: true
+    settings:
+      registry: quay.io
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      repo: quay.io/kontena/mortar
+      dockerfile: Dockerfile
+      auto_tag: true
     when:
       event: ['tag']
-
-  release-gem:
+  - name: release-gem
     image: ruby:2.4
-    secrets: [ rubygems_auth ]
+    environment:
+      RUBYGEMS_AUTH:
+        from_secret: rubygems_auth
     commands:
       - mkdir -p ~/.gem
       - echo $RUBYGEMS_AUTH | base64 -d > ~/.gem/credentials && chmod 0600 ~/.gem/credentials
@@ -35,19 +50,21 @@ pipeline:
       - gem push *.gem
     when:
       event: ['tag']
-
-  create_gh_release:
+  - name: create_gh_release
     image: ubuntu:xenial
-    secrets: [ github_token ]
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
     commands:
       - ./build/drone/create_release.sh
     when:
       event: tag
-  build_xenial:
+  - name: build_xenial
     image: ubuntu:xenial
-    secrets: [ github_token ]
     environment:
-      - CPPFLAGS=-P
+      CPPFLAGS: '-P'
+      GITHUB_TOKEN:
+        from_secret: github_token
     commands:
       - ./build/drone/ubuntu_xenial.sh
     when:
