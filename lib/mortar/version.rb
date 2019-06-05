@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module Mortar
-  VERSION = "0.4.0"
+  VERSION = "0.4.2"
 end
