@@ -6,10 +6,11 @@ platform:
   arch: amd64
 steps:
   - name: test
-    image: ruby:2.4
+    image: ruby:2.6
     commands:
+      - gem install bundler -v 2.0.2
       - bundle install --path bundler
-      - bundle exec rspec spec/ # && bundle exec rubocop --fail-level A -S --format c --parallel
+      - bundle exec rspec spec/
       - bundle exec rubocop lib/
   - name: docker_latest
     image: plugins/docker

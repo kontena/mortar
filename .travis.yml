@@ -2,6 +2,8 @@ language: ruby
 sudo: required
 cache: bundler
 bundler_args: --without development
+before_install:
+  - gem install bundler -v 2.0.2
 env:
   global:
     - secure: "ODwK1K2gm4yBWSTgQ9SVyIMTheUnT55JtMKb8i8wQiKC3g74HHmiJGOMSqkCGenwF7Fc8e0BQEGHiyFDcCnuUVhU5oTDgOEEcCHiFAwDCv+tekBqCAjmccqRE5MamSZsN7myGULClaljFDKdRc5b/MN1f26bViYUq3H7m06jnW/JYn+32VenGFq1Py7QyTD1IqG2x6sC4zG7jqiIXqcM24sKO6Q49fb5KneqF+A4C2wHPpjuVmgqRcwrQKcNixPtiXs4Nn5UZEkH3ceAyXjBvElI2Bt6/sJLfB2C2/IdEob+MrKsBfGAcgSXPKGEQvMyzAkcWg7aXa65H09ta/sUe0OdgczAxeFIV26RmsHJN+/vW5b46+cgcIEnyTq0whsrKPiailEWfns7xgfY+Q4MazUJ6mbxhmRixaNSn6y1GIKqSYv5FpU/+KVfu0tdM/joOkHcNxnyIDWAnTegN0sEwMCnHEt9tkdXtMZe83B9BY2cbWM36BdW1zRHeTZj8kfHpifT34cuoiQrg2P19BLpqzIgrCMbznbXNEy/m9TisMplvY6SdpujqYhCdLd4srbzcxq2UDplWsL0QtRy+aiaPKFy24yDnKo45aBjDFI4787lxmlW96KMoXNISK2F050IxDJ5yQ0qeRY1GvTy2GWy/sSRvrr8gb+ZY9+/m2MbLqw="
@@ -12,5 +14,5 @@ jobs:
   include:
     - stage: publish binary
       script: ./build/travis/macos.sh
-      rvm: 2.4
+      rvm: 2.6
       os: osx

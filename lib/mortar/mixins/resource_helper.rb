@@ -16,8 +16,8 @@ module Mortar
       variables = { name: name, var: variables_struct }
       resources = YamlFile.new(filename).load(variables)
       resources.map { |r| K8s::Resource.new(r) }
-    rescue Mortar::YamlFile::ParseError => exc
-      signal_usage_error exc.message
+    rescue Mortar::YamlFile::ParseError => e
+      signal_usage_error e.message
     end
 
     def load_resources(src)
