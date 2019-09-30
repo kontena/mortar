@@ -40,8 +40,8 @@ module Mortar
       end
 
       result
-    rescue Psych::SyntaxError => ex
-      raise ParseError, ex.message
+    rescue Psych::SyntaxError => e
+      raise ParseError, e.message
     end
 
     def dirname
@@ -56,8 +56,8 @@ module Mortar
       Namespace.new(variables).with_binding do |ns_binding|
         ERB.new(@content, nil, '%<>-').tap { |e| e.location = [@filename, nil] }.result(ns_binding)
       end
-    rescue StandardError, ScriptError => ex
-      raise ParseError, "#{ex.class.name} : #{ex.message} (#{ex.backtrace.first.gsub(/:in `with_binding'/, '')})"
+    rescue StandardError, ScriptError => e
+      raise ParseError, "#{e.class.name} : #{e.message} (#{e.backtrace.first.gsub(/:in `with_binding'/, '')})"
     end
   end
 end
