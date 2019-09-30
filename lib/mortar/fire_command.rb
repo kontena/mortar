@@ -106,7 +106,7 @@ module Mortar
 
     # @return [Hash]
     def process_extra_labels
-      @config.labels(extra_labels)
+      @configuration.labels(extra_labels)
     end
 
     # @param resources [Array<K8s::Resource>]
