@@ -3,7 +3,7 @@
 set -ue
 
 brew install squashfs
-curl -sL https://dl.bintray.com/kontena/ruby-packer/0.5.0-dev/rubyc-darwin-amd64.gz | gunzip > /usr/local/bin/rubyc
+curl -sL https://github.com/kontena/ruby-packer/releases/download/2.6.0-0.6.0/rubyc-2.6.0-0.6.0-osx-amd64.gz | gunzip > /usr/local/bin/rubyc
 chmod +x /usr/local/bin/rubyc
 version=${TRAVIS_TAG#"v"}
 package="mortar-darwin-amd64-${version}"

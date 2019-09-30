@@ -12,5 +12,5 @@ jobs:
   include:
     - stage: publish binary
       script: ./build/travis/macos.sh
-      rvm: 2.4
+      rvm: 2.6
       os: osx

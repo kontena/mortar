@@ -5,7 +5,7 @@ set -ue
 # build binary
 apt-get update -y
 apt-get install -y -q squashfs-tools build-essential ruby bison ruby-dev git-core texinfo curl
-curl -sL https://dl.bintray.com/kontena/ruby-packer/0.5.0-dev/rubyc-linux-amd64.gz | gunzip > /usr/local/bin/rubyc
+curl -sL https://github.com/kontena/ruby-packer/releases/download/2.6.0-0.6.0/rubyc-2.6.0-0.6.0-linux-amd64.gz | gunzip > /usr/local/bin/rubyc
 chmod +x /usr/local/bin/rubyc
 gem install bundler
 version=${DRONE_TAG#"v"}
