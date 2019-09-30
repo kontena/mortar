@@ -17,6 +17,7 @@ module Mortar
     parameter "NAME", "deployment name"
 
     option ["--var"], "VAR", "set template variables", multivalued: true
+    option ["--label"], "LABEL", "extra labels that are set to all resources", multivalued: true
     option ["--output"], :flag, "only output generated yaml"
     option ["--[no-]prune"], :flag, "automatically delete removed resources", default: true
     option ["--overlay"], "OVERLAY", "overlay dirs", multivalued: true
@@ -45,6 +46,7 @@ module Mortar
       load_config
 
       resources = process_overlays
+      resources = inject_extra_labels(resources, process_extra_labels)
 
       if output?
         puts resources_output(resources)
@@ -87,6 +89,37 @@ module Mortar
       end
 
       resources
+    end
+
+    # @return [Hash]
+    def extra_labels
+      return @extra_labels if @extra_labels
+
+      @extra_labels = {}
+      label_list.each do |label|
+        key, value = label.split('=')
+        @extra_labels[key] = value
+      end
+
+      @extra_labels
+    end
+
+    # @return [Hash]
+    def process_extra_labels
+      @config.labels(extra_labels)
+    end
+
+    # @param resources [Array<K8s::Resource>]
+    # @param labels [Hash]
+    # @return [Array<K8s::Resource>]
+    def inject_extra_labels(resources, labels)
+      resources.map { |resource|
+        resource.merge(
+          metadata: {
+            labels: labels
+          }
+        )
+      }
     end
 
     # @return [RecursiveOpenStruct]

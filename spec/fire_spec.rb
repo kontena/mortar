@@ -89,4 +89,49 @@ RSpec.describe Mortar::FireCommand do
         expect(subject.variables_hash).to eq({})
       end
     end
+
+    describe "#extra_labels" do
+      let(:subject) { described_class.new('') }
+
+      it 'returns empty hash by default' do
+        expect(subject.extra_labels).to eq({})
+      end
+
+      it 'returns label has if label options are given' do
+        subject.parse(["--label", "foo=bar", "--label", "bar=baz", "foobar", "foobar"])
+        expect(subject.extra_labels).to eq({
+          "foo" => "bar", "bar" => "baz"
+        })
+      end
+    end
+
+    describe "#inject_extra_labels" do
+      let(:subject) { described_class.new('') }
+      let(:resources) do
+        [
+          K8s::Resource.new({
+            metadata: {
+              labels: {
+                userlabel: 'test'
+              }
+            }
+          }),
+          K8s::Resource.new({
+            metadata: {
+              name: 'foo'
+            }
+          })
+        ]
+      end
+
+      it 'injects labels to resources' do
+        extra_labels = { "foo" => "bar", "bar" => "baz" }
+        result = subject.inject_extra_labels(resources, extra_labels)
+        expect(result.first.metadata.labels.to_h).to eq({
+          bar: "baz",
+          foo: "bar",
+          userlabel: "test"
+        })
+      end
+    end
   end

@@ -146,7 +146,7 @@ See examples at [examples/templates](examples/templates).
 
 As for any process, environment variables are also available for Mortar during template processing.
 
-```
+```yaml
 kind: Pod
 apiVersion: v1
 metadata:
@@ -168,7 +168,7 @@ Another option to use variables is via command-line options. Use `mortar --var f
 
 Each of the variables defined will be available in the template via `var.<variable name>`.
 
-```
+```yaml
 kind: Pod
 apiVersion: v1
 metadata:
@@ -189,8 +189,9 @@ You could shoot this resource with `mortar --var port.name=some-port --var port.
 
 ### Shot configuration file
 
-It is also possible to pass both [variables](#variables) and [overlays](#overlays) through a configuration file. As your templates complexity and the amount of variables used grows, it might be easier to manage the variables with an yaml configuration file. The config file has the following syntax:
-```
+It is also possible to pass [variables](#variables), [overlays](#overlays) and [labels](#labels) through a configuration file. As your templates complexity and the amount of variables used grows, it might be easier to manage the variables with an yaml configuration file. The config file has the following syntax:
+
+```yaml
 variables:
   ports:
     - name: http
@@ -202,11 +203,27 @@ overlays:
   - bar
 ```
 
-Both `variables` and `overlays` are optional.
+`variables`, `overlays` and `labels` are optional.
 
 For variables the hash is translated into a `RecursiveOpenStruct` object. What that means is that you can access each element with dotted path notation, just like the vars given through `--var` option. And of course arrays can be looped etc.. Check examples folder how to use variables effectively.
 
 The configuration file can be given using `-c` option to `mortar fire` command. By default Mortar will look for `shot.yml` or `shot.yaml` files present in current working directory.
+
+### Labels
+
+It's possible to set global labels for all resources in a shot via options or configuration file.
+
+#### Labels via options
+
+Use `mortar --label foo=bar my-app resource` to set label to all resources in a shot.
+
+#### Labels via configuration file
+
+```yaml
+labels:
+  foo: bar
+  bar: baz
+```
 
 ## Contributing
 
