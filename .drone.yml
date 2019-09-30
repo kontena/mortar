@@ -8,6 +8,7 @@ steps:
   - name: test
     image: ruby:2.6
     commands:
+      - bundle update bundler
       - bundle install --path bundler
       - bundle exec rspec spec/
       - bundle exec rubocop lib/
