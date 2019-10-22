@@ -54,7 +54,7 @@ module Mortar
 
     def read(variables = {})
       Namespace.new(variables).with_binding do |ns_binding|
-        ERB.new(@content, nil, '%<>-').tap { |e| e.location = [@filename, nil] }.result(ns_binding)
+        ERB.new(@content, nil, '-').tap { |e| e.location = [@filename, nil] }.result(ns_binding)
       end
     rescue StandardError, ScriptError => e
       raise ParseError, "#{e.class.name} : #{e.message} (#{e.backtrace.first.gsub(/:in `with_binding'/, '')})"
