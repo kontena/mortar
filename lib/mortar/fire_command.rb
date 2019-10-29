@@ -116,7 +116,7 @@ module Mortar
       resources.map { |resource|
         resource.merge(
           metadata: {
-            labels: labels
+            labels: labels.to_hash
           }
         )
       }

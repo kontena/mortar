@@ -49,7 +49,7 @@ module Mortar
     def labels(other = {})
       hash = @labels.dup
       hash.merge!(other)
-      RecursiveOpenStruct.new(hash)
+      RecursiveOpenStruct.new(hash, preserve_original_keys: true)
     end
   end
 end
